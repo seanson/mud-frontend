@@ -1,0 +1,10 @@
+.StatusBar {
+    width: 100%;
+    text-align: left;
+    background-color: black;
+    color: white;
+    border: 0px;
+    margin-top: 2px;
+    height: 20px;
+    font-family: monospace;
+}

@@ -1,0 +1,40 @@
+{
+  "name": "mud-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "ansi-to-react": "^3.0.0",
+    "esm": "^3.0.34",
+    "express": "^4.16.3",
+    "prop-types": "^15.6.1",
+    "react": "^16.3.2",
+    "react-cookie": "^2.1.4",
+    "react-dom": "^16.3.2",
+    "react-scripts": "1.1.4",
+    "socket.io": "^2.1.0",
+    "socket.io-client": "^2.1.0",
+    "utf-8-validate": "^4.0.2",
+    "uuid": "^3.2.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "server": "node server",
+    "docker-publish": "docker build --build-arg REACT_APP_SOCKET_URL='https://mud.ahmeni.net' -t seanson/mud-frontend-test . && docker push seanson/mud-frontend-test"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.2.3",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-babel": "^5.1.0",
+    "eslint-plugin-import": "^2.11.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-prettier": "^2.6.0",
+    "eslint-plugin-react": "^7.8.1",
+    "prettier": "^1.12.1"
+  }
+}

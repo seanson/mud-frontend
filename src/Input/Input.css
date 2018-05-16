@@ -1,0 +1,14 @@
+.InputBar {
+    position: absolute;
+    height: 10vh;
+    top: 90vh;
+    width: 100%;
+    width: 100%;
+    text-align: left;
+    background-color: black;
+    color: white;
+    border: 0px;
+    margin-top: 2px;
+    height: 20px;
+    font-family: monospace;
+}

@@ -10,7 +10,7 @@ const getStyle = context => ({
 
 const Screen = (props, context) => (
     <div className="Screen" style={getStyle(context)} ref={props.screenRef}>
-        <pre>{props.buffer}</pre>
+        <p>{props.buffer}</p>
     </div>
 );
 

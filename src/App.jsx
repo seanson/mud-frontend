@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import SocketIO from "socket.io-client";
 import PropTypes from "prop-types";
 import uuid from "uuid/v4";
-import Ansi from "ansi-to-react";
+// import update from "immutability-helper";
 
 import { withCookies, Cookies } from "react-cookie";
 
@@ -13,6 +13,8 @@ import ServerSelectContainer from "./ServerSelect/ServerSelectContainer";
 import StatusBar from "./StatusBar/StatusBar";
 import Input from "./Input/Input";
 import logo from "./logo.png";
+
+import toAnsi from "./util/toAnsi";
 
 const socketURL = process.env.REACT_APP_SOCKET_URL ? process.env.REACT_APP_SOCKET_URL : "ws://localhost:8080";
 
@@ -25,6 +27,7 @@ class App extends Component {
         buffer: [],
         servers: [],
         status: "closed",
+        echo: true,
         statusData: {}
     };
 
@@ -37,15 +40,25 @@ class App extends Component {
         console.log("Client ID: ", this.id);
 
         const socket = new SocketIO(`${socketURL}?token=${this.id}`);
-        socket.on("clientData", data => this.onMessage(data));
+        socket.on("clientData", data => this.onData(data));
+        socket.on("clientControl", event => this.onControl(event));
+        socket.on("backLog", data => this.onBackLog(data));
         socket.on("status", ({ status, data }) => this.onStatus(status, data));
         socket.on("servers", servers => this.onServers(servers));
+        socket.on("echo", echo => this.setState({echo}));
+        socket.on("GMCP", ([command, data]) => this.onGMCP(command, data));
         this.socket = socket;
     }
 
-    onMessage(event) {
-        // console.log("onMessage", event);
-        this.setState(oldState => ({ buffer: [...oldState.buffer, <Ansi key={uuid()}>{`${event}\r\n`}</Ansi>] }));
+    onBackLog(data) {
+        const buffer = data.map(message => toAnsi(message));
+        this.setState({ buffer });
+    }
+
+    onData(data) {
+        this.setState(oldState => ({
+            buffer: [...oldState.buffer, toAnsi(data)]
+        }));
     }
 
     onServers(servers) {
@@ -55,22 +68,30 @@ class App extends Component {
 
     onStatus(status, statusData) {
         console.log("onStatus", status, statusData);
-        // const { error } = data;
-        // console.log(!!error);
         this.setState({ status, statusData });
     }
 
+    onGMCP(command, data) {
+        console.log("onGMCP", command, data);
+        this;
+    }
+
     connectServer(name) {
-        console.log("connectServer", name);
+        console.log("connectServer", name, this.state.status);
+        if (this.state.status === "connect") {
+            this.socket.emit("disconnectServer", name);
+            return;
+        }
         this.socket.emit("connectServer", name);
     }
 
     sendMessage(message) {
-        console.log("sendMessage", message);
-        this.setState(oldState => ({
-            buffer: [...oldState.buffer, <Ansi key={uuid()}>{`\r\n${message}\r\n`}</Ansi>]
-        }));
-        this.socket.emit("send", { clientId: this.state.clientId, message });
+        if (this.state.echo) {
+            this.setState(oldState => ({
+                buffer: [...oldState.buffer, toAnsi(`\r\n${message}\r\n`)]
+            }));
+        }
+        this.socket.emit("send", { clientId: this.state.clientId, message: `${message}\r\n` });
     }
     render() {
         return (
@@ -81,12 +102,13 @@ class App extends Component {
                         <ServerSelectContainer
                             onServerConnect={server => this.connectServer(server)}
                             servers={this.state.servers}
+                            status={this.state.status}
                         />
                     )}
                     <StatusBar status={this.state.status} statusData={this.state.statusData} />
                 </header>
                 <ScreenContainer buffer={this.state.buffer} />
-                <Input sendMessage={message => this.sendMessage(message)} />
+                <Input sendMessage={message => this.sendMessage(message)} echo={this.state.echo} />
             </div>
         );
     }

@@ -61,7 +61,11 @@ class Input extends Component {
                 <input
                     autoFocus // eslint-disable-line jsx-a11y/no-autofocus
                     className="InputBar"
-                    type="text"
+                    autoComplete="off"
+                    autoCapitalize="off"
+                    autoCorrect="off"
+                    spellCheck="false"
+                    type={this.props.echo ? "text" : "password"}
                     ref={this.input}
                     value={this.state.value}
                     onChange={event => this.handleChange(event)}
@@ -73,7 +77,8 @@ class Input extends Component {
 }
 
 Input.propTypes = {
-    sendMessage: PropTypes.func.isRequired
+    sendMessage: PropTypes.func.isRequired,
+    echo: PropTypes.bool.isRequired
 };
 
 export default Input;

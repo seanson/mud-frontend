@@ -6,6 +6,7 @@
     "ansi-to-react": "^3.0.0",
     "esm": "^3.0.34",
     "express": "^4.16.3",
+    "immutability-helper": "^2.7.0",
     "prop-types": "^15.6.1",
     "react": "^16.3.2",
     "react-cookie": "^2.1.4",
@@ -22,7 +23,7 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "server": "node server",
-    "docker-publish": "docker build --build-arg REACT_APP_SOCKET_URL='https://mud.ahmeni.net' -t seanson/mud-frontend-test . && docker push seanson/mud-frontend-test"
+    "docker-publish": "docker build --build-arg REACT_APP_SOCKET_URL='https://mud.seanson.local' -t seanson/mud-frontend-test . && docker push seanson/mud-frontend-test"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.3",

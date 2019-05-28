@@ -5,7 +5,7 @@ import Screen from "./Screen";
 
 class ScreenContainer extends Component {
     componentDidUpdate() {
-        console.log("componentDidUpdate", "buffer length:", this.props.buffer.length);
+        // console.log("componentDidUpdate", "buffer length:", this.props.buffer.length);
         this.screen.current.scrollTop = this.screen.current.scrollHeight;
     }
 

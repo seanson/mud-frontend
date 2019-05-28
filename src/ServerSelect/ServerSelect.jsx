@@ -10,7 +10,7 @@ const ServerSelect = props => {
     return (
         <div className="serverSelect">
             <select name="server" onChange={props.serverSelect}>{servers}</select>
-            <input type="submit" onClick={props.serverConnect} value="Connect" />
+            <input type="submit" onClick={props.serverConnect} value={props.status === "connect" ? "Disconnect" : "Connect"} />
         </div>
     );
 };
@@ -24,7 +24,8 @@ ServerSelect.propTypes = {
         })
     ).isRequired,
     serverSelect: PropTypes.func.isRequired,
-    serverConnect: PropTypes.func.isRequired
+    serverConnect: PropTypes.func.isRequired,
+    status: PropTypes.string.isRequired
 };
 
 export default ServerSelect;

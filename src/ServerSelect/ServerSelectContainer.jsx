@@ -30,6 +30,7 @@ class ServerSelectContainer extends React.Component {
             <ServerSelect
                 serverConnect={(event) => this.onServerConnect(event)}
                 serverSelect={(event) => this.onServerSelect(event)}
+                status={this.props.status}
                 servers={this.props.servers}
             />
         );
@@ -43,7 +44,8 @@ ServerSelectContainer.propTypes = {
             port: PropTypes.number.isRequired
         })
     ).isRequired,
-    onServerConnect: PropTypes.func.isRequired
+    onServerConnect: PropTypes.func.isRequired,
+    status: PropTypes.string.isRequired
 };
 
 export default ServerSelectContainer;

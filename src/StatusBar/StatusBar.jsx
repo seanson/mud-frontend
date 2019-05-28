@@ -17,8 +17,13 @@ const getStatus = (status, statusData) => {
             };
         case "connect":
             return {
-                color: "green",
+                color: "lightgreen",
                 status: "Connected"
+            };
+        case "close":
+            return {
+                color: "red",
+                status: "Disconnected"
             };
         default:
             return {

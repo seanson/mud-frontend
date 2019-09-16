@@ -16,102 +16,113 @@ import logo from "./logo.png";
 
 import toAnsi from "./util/toAnsi";
 
-const socketURL = process.env.REACT_APP_SOCKET_URL ? process.env.REACT_APP_SOCKET_URL : "ws://localhost:8080";
+const socketURL = process.env.REACT_APP_SOCKET_URL
+  ? process.env.REACT_APP_SOCKET_URL
+  : "ws://localhost:8080";
 
 class App extends Component {
-    static propTypes = {
-        cookies: PropTypes.instanceOf(Cookies).isRequired
-    };
+  static propTypes = {
+    cookies: PropTypes.instanceOf(Cookies).isRequired
+  };
 
-    state = {
-        buffer: [],
-        servers: [],
-        status: "closed",
-        echo: true,
-        statusData: {}
-    };
+  state = {
+    buffer: [],
+    servers: [],
+    status: "closed",
+    echo: true,
+    statusData: {}
+  };
 
-    componentDidMount() {
-        this.id = this.props.cookies.get("id");
-        if (!this.id) {
-            this.id = uuid();
-            this.props.cookies.set("id", this.id);
-        }
-        console.log("Client ID: ", this.id);
-
-        const socket = new SocketIO(`${socketURL}?token=${this.id}`);
-        socket.on("clientData", data => this.onData(data));
-        socket.on("clientControl", event => this.onControl(event));
-        socket.on("backLog", data => this.onBackLog(data));
-        socket.on("status", ({ status, data }) => this.onStatus(status, data));
-        socket.on("servers", servers => this.onServers(servers));
-        socket.on("echo", echo => this.setState({echo}));
-        socket.on("GMCP", ([command, data]) => this.onGMCP(command, data));
-        this.socket = socket;
+  componentDidMount() {
+    this.id = this.props.cookies.get("id");
+    if (!this.id) {
+      this.id = uuid();
+      this.props.cookies.set("id", this.id);
     }
+    console.log("Client ID: ", this.id);
 
-    onBackLog(data) {
-        const buffer = data.map(message => toAnsi(message));
-        this.setState({ buffer });
-    }
+    const socket = new SocketIO(`${socketURL}?token=${this.id}`);
+    socket.on("clientData", data => this.onData(data));
+    socket.on("clientControl", event => this.onControl(event));
+    socket.on("backLog", data => this.onBackLog(data));
+    socket.on("status", ({ status, data }) => this.onStatus(status, data));
+    socket.on("servers", servers => this.onServers(servers));
+    socket.on("echo", echo => this.setState({ echo }));
+    socket.on("GMCP", ([command, data]) => this.onGMCP(command, data));
+    this.socket = socket;
+  }
 
-    onData(data) {
-        this.setState(oldState => ({
-            buffer: [...oldState.buffer, toAnsi(data)]
-        }));
-    }
+  onBackLog(data) {
+    const buffer = data.map(message => toAnsi(message));
+    this.setState({ buffer });
+  }
 
-    onServers(servers) {
-        console.log("onServers", servers);
-        this.setState({ servers });
-    }
+  onData(data) {
+    this.setState(oldState => ({
+      buffer: [...oldState.buffer, toAnsi(data)]
+    }));
+  }
 
-    onStatus(status, statusData) {
-        console.log("onStatus", status, statusData);
-        this.setState({ status, statusData });
-    }
+  onServers(servers) {
+    console.log("onServers", servers);
+    this.setState({ servers });
+  }
 
-    onGMCP(command, data) {
-        console.log("onGMCP", command, data);
-        this;
-    }
+  onStatus(status, statusData) {
+    console.log("onStatus", status, statusData);
+    this.setState({ status, statusData });
+  }
 
-    connectServer(name) {
-        console.log("connectServer", name, this.state.status);
-        if (this.state.status === "connect") {
-            this.socket.emit("disconnectServer", name);
-            return;
-        }
-        this.socket.emit("connectServer", name);
-    }
+  onGMCP(command, data) {
+    console.log("onGMCP", command, data);
+    // this;
+  }
 
-    sendMessage(message) {
-        if (this.state.echo) {
-            this.setState(oldState => ({
-                buffer: [...oldState.buffer, toAnsi(`\r\n${message}\r\n`)]
-            }));
-        }
-        this.socket.emit("send", { clientId: this.state.clientId, message: `${message}\r\n` });
+  connectServer(name) {
+    console.log("connectServer", name, this.state.status);
+    if (this.state.status === "connect") {
+      this.socket.emit("disconnectServer", name);
+      return;
     }
-    render() {
-        return (
-            <div className="App">
-                <header className="App-header">
-                    <img src={logo} className="App-logo" alt="logo" />
-                    {this.state.servers.length > 0 && (
-                        <ServerSelectContainer
-                            onServerConnect={server => this.connectServer(server)}
-                            servers={this.state.servers}
-                            status={this.state.status}
-                        />
-                    )}
-                    <StatusBar status={this.state.status} statusData={this.state.statusData} />
-                </header>
-                <ScreenContainer buffer={this.state.buffer} />
-                <Input sendMessage={message => this.sendMessage(message)} echo={this.state.echo} />
-            </div>
-        );
+    this.socket.emit("connectServer", name);
+  }
+
+  sendMessage(message) {
+    if (this.state.echo) {
+      this.setState(oldState => ({
+        buffer: [...oldState.buffer, toAnsi(`\r\n${message}\r\n`)]
+      }));
     }
+    this.socket.emit("send", {
+      clientId: this.state.clientId,
+      message: `${message}\r\n`
+    });
+  }
+  render() {
+    return (
+      <div className="App">
+        <header className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          {this.state.servers.length > 0 && (
+            <ServerSelectContainer
+              onServerConnect={server => this.connectServer(server)}
+              servers={this.state.servers}
+              status={this.state.status}
+            />
+          )}
+          <StatusBar
+            status={this.state.status}
+            statusData={this.state.statusData}
+          />
+        </header>
+        <ScreenContainer buffer={this.state.buffer} />
+        <Input
+          sendMessage={message => this.sendMessage(message)}
+          echo={this.state.echo}
+        />
+      </div>
+    );
+  }
 }
 
 export default withCookies(App);

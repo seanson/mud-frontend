@@ -2,7 +2,7 @@ FROM node as build-deps
 
 WORKDIR /app/
 COPY package.json yarn.lock /app/
-RUN yarn install
+RUN npm install
 
 COPY . /app/
 
@@ -12,7 +12,7 @@ ARG NODE_ENV=production
 ENV REACT_APP_SOCKET_URL $REACT_APP_SOCKET_URL
 ENV NODE_ENV $NODE_ENV
 
-RUN yarn build
+RUN npm run build
 
 FROM nginx:1.12-alpine
 COPY --from=build-deps /app/build /usr/share/nginx/html

@@ -25,7 +25,7 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "server": "node server",
-    "docker-publish": "docker build --build-arg REACT_APP_SOCKET_URL='https://mud.seanson.local' -t seanson/mud-frontend-test . && docker push seanson/mud-frontend-test"
+    "docker-build": "docker build -t seanson/mud-frontend:test"
   },
   "devDependencies": {
     "eslint-config-airbnb": "^16.1.0",

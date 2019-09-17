@@ -1,7 +1,7 @@
 name: Build and Deploy
 on:
-  push:	
-    branches:	
+  push:
+    branches:
       - master
 jobs:
   build-and-deploy:
@@ -17,5 +17,6 @@ jobs:
         BASE_BRANCH: master # The branch the action should deploy from.
         BRANCH: gh-pages # The branch the action should deploy to.
         FOLDER: build # The folder the action should deploy.
+        REACT_APP_SOCKET_URL: "https://mud-api.seanson.website"
         BUILD_SCRIPT: npm install && npm run-script build # The build script the action should run prior to deploying.
         CNAME: mud.seanson.website

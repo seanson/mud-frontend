@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@master
+      uses: actions/checkout@5456577541f2da5c938244e2c911d0222927abf7
 
     - name: Build and Deploy
       uses: JamesIves/github-pages-deploy-action@master
@@ -18,3 +18,4 @@ jobs:
         BRANCH: gh-pages # The branch the action should deploy to.
         FOLDER: build # The folder the action should deploy.
         BUILD_SCRIPT: npm install && npm run-script build # The build script the action should run prior to deploying.
+        CNAME: mud.seanson.website
